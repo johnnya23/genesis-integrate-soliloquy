@@ -30,7 +30,7 @@ function soliloquy_post_group_options()
                 ),
                 'post_type' => $post_types,
                 'taxonomy' => '',
-                'allow_null' => 0,
+                'allow_null' => 1,
                 'multiple' => 1,
                 'return_format' => 'object',
                 'ui' => 1,
@@ -48,6 +48,7 @@ function soliloquy_post_group_options()
                     'class' => '',
                     'id' => '',
                 ),
+                'allow_null' => 1,
                 'select_type' => 'Checkboxes',
             ),
             array(
@@ -88,7 +89,14 @@ function soliloquy_post_group_options()
         'active' => 1,
         'description' => '',
     ));
+}
+add_action('acf/init', 'soliloquy_post_group_options', 998);
 
+
+
+
+function soliloquy_slider_options()
+{
     /* pull types from settings page to determine visibility on pages/posts */
     //$posts = get_soliloquyfield('location', 'option');
     $types = get_field('jma_soliloquy_post_type', 'option');
@@ -108,7 +116,7 @@ function soliloquy_post_group_options()
     }
     if (is_array($posts)) {
         foreach ($posts as $post) {
-            $param = is_page($post)?'page':'post';
+            $param = $post->post_type == 'post'?'post':'page';
             $location[] = array(
                 array(
                 'param' => $param,
@@ -511,4 +519,7 @@ function soliloquy_post_group_options()
     'description' => 'Replaces your choice from above for header content',
 ));
 }
-add_action('acf/init', 'soliloquy_post_group_options', 999);
+
+if (function_exists('acf_add_local_field_group')) {
+    add_action('acf/init', 'soliloquy_slider_options', 999);
+}

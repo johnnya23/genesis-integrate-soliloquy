@@ -1,56 +1,62 @@
 jQuery(document).ready(function($) {
     $window = $(window);
-
-    function fix_soliloquy_elements() {
-        window_width = $window.width();
-        $jma_header_image_wrap = $('.jma-header-image-wrap');
-        available_height = $.isNumeric($('body').data('available_height')) ? $('body').data('available_height') : $jma_header_image_wrap.height();
-
-        //width_val = $('body').hasClass('jma-stack-991') ? 12 : 7;
-        if ($('#dont-edit-this-element').css('z-index') > 12) {
-
-            $jma_header_image_wrap.find('.soliloquy-caption').css({
-                'width': window_width + 'px',
-                'height': available_height
-            });
-            $jma_header_image_wrap.find('.soliloquy-controls-direction').css({
-                'width': window_width + 'px'
-            });
-            $jma_header_image_wrap.find('.soliloquy-pager').css({
-                'bottom': (($jma_header_image_wrap.height() - available_height) / 2 + 10) + 'px'
-            });
-
-        } else {
-            $jma_header_image_wrap.find('.soliloquy-caption').css({
-                'width': '',
-                'height': ''
-            });
-
-            $jma_header_image_wrap.find('.soliloquy-controls-direction').css('width', '');
-            $('.soliloquy-caption').css({
-                'width': '',
-                'height': ''
-            });
-            $jma_header_image_wrap.find('.soliloquy-pager').css({
-                'bottom': ''
-            });
-        }
+    var featured_display_ratio = 0;
+    if ($('.jma-sol-featured-display').length) {
+        var $featured_display = $('.jma-sol-featured-display');
+        featured_display_orig_height = parseInt($featured_display.css('height'), 10);
+        featured_display_ratio = $featured_display.height() / $featured_display.width();
     }
 
-    /* keeps the captions from showing before the slider is repositioned */
-    function show_coptions() {
-        $('.soliloquy-item').removeClass('jma-dynamic-slide-hidden');
+    function fix_soliloquy_elements() {
+        //width_val = $('body').hasClass('jma-stack-991') ? 12 : 7;
+
+        if (($('.jma-gbs-mobile-panel').css('display') == 'none') && ($window.width() > $window.height())) {
+            $('.inner-visual').removeClass('normal-width');
+            $('.inner-visual').css('max-height', featured_display_orig_height + 'px');
+            if (featured_display_ratio) {
+                $target = $featured_display.closest('.inner-visual');
+                target_ratio = $target.height() / $target.width();
+                if (target_ratio < featured_display_ratio) {
+                    //target is taller than image use 100% width and left
+                    //top and bottom overflow and adjust dots
+                    $featured_display.css({
+                        'width': '100%',
+                        'height': ($target.width() * featured_display_ratio) + 'px'
+                    });
+                    bottom = (((($target.width() * featured_display_ratio) - $target.height()) / 2) + 20);
+                    $featured_display.find('.soliloquy-pager').css('bottom', bottom + 'px');
+                    $featured_display.find('.soliloquy-controls-direction').css({
+                        'width': '100%'
+                    });
+                    $featured_display.find('.soliloquy-caption').css({
+                        'width': '80%',
+                        'height': ($target.height() - 40) + 'px'
+                    });
+                } else {
+                    //target is wider than image use 100% height and left
+                    //sides overflow and adjust arrows
+                    $featured_display.css({
+                        'height': $target.height() + 'px',
+                        'width': $target.height() * (1 / featured_display_ratio) + 'px'
+                    });
+                    $featured_display.find('.soliloquy-controls-direction').css({
+                        'width': $target.width() + 'px'
+                    });
+                    $featured_display.find('.soliloquy-caption').css({
+                        'width': ($target.width() - 120) + 'px',
+                        'height': ($target.height() - 40) + 'px'
+                    });
+                }
+            }
+        } else {
+            $('.inner-visual').addClass('normal-width');
+        }
     }
 
     /* on load we dont run fix elements until the slider nav is loaded  */
     function solIsLoaded() {
 
         fix_soliloquy_elements();
-
-        //this is what delays caption display
-        $.when(fix_soliloquy_elements()).done(function() {
-            show_coptions();
-        });
 
     }
 
@@ -72,7 +78,7 @@ jQuery(document).ready(function($) {
         subtree: true
     });
 
-    $window.resize(function() {
+    $window.resize(function(e) {
         fix_soliloquy_elements();
     });
 

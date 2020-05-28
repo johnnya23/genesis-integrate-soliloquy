@@ -3,8 +3,8 @@ if (!defined('ABSPATH')) {
     die('No direct access.');
 }
 /*
-Plugin Name: JMA Integrate Soliloquy Slider into Header for 7.3
-Description: This plugin integrates the soliloquy slider plugin with jma child theme header for 7.3
+Plugin Name: JMA Integrate Soliloquy Slider into Genesis Bootstrap
+Description: This plugin integrates the soliloquy slider plugin with jma Genesis Bootstrap
 Version: 1.0
 Author: John Antonacci
 Author URI: http://cleansupersites.com
@@ -20,16 +20,20 @@ if (! defined('JMASOL_URL')) {
 
 /* returns true if the soliloquy dynamic slider is selected for
 the page (don't change default slug) */
-function jma_dynamic_selected()
+function jma_dynamic_selected($id = 0)
 {
     $return = false;
-    if ($data = get_post_meta(get_the_ID(), '_jma_header_data_key', false)) {
+    if (!$id) {
+        $id = get_the_ID();
+    }
+    if ($data = get_post_meta($id, '_jma_ghb_header_footer_key', false)) {
         if (isset($data[0]['slider_id']) && $data[0]['slider_id']) {
             $slider_id = $data[0]['slider_id'];
-            $slider_id_exploded = explode('|', $slider_id);
-            $slider_slug = get_post($slider_id_exploded[1]);
-            $post_name = $slider_slug->post_name;
-            $return =  $slider_id_exploded[0] == 'soliloquy-slider' && strpos($post_name, 'dynamic') !== false;
+            $slider = get_post($slider_id);
+            if (is_object($slider)) {
+                $post_name = $slider->post_name;
+                $return =  $slider->post_type == 'soliloquy' && strpos($post_name, 'dynamic') !== false;
+            }
         }
     }
     return $return;
@@ -37,38 +41,19 @@ function jma_dynamic_selected()
 
 function jma_soliloquy_files()
 {
-    if (jma_dynamic_selected()) {
-        $dep = array();
-        if (function_exists('use_big_slider') && use_big_slider()) {
-            $dep = array('jma_big_slider_js');
-        }
-        wp_enqueue_script('jma_soliloquy_js', JMASOL_URL .  'jma-soliloquy.min.js', $dep);
-    }
+    wp_enqueue_script('jma_soliloquy_js', JMASOL_URL .  'jma-soliloquy.js');
+
     wp_enqueue_style('jma_soliloquy_css', JMASOL_URL .  'jma_soliloquy_css.min.css');
-    global $jma_spec_options;
-    $adjusted_icon_color = function_exists('first_is_lighter') && first_is_lighter($jma_spec_options['footer_background_color'], $jma_spec_options['footer_font_color'])? $jma_spec_options['footer_font_color']: $jma_spec_options['footer_background_color'];
+    $mods = jma_gbs_get_theme_mods('jma_gbs_');
+    $adjusted_icon_color = function_exists('first_is_lighter') && first_is_lighter($mods['footer_bg_color'], $mods['footer_font_color'])? $mods['footer_font_color']: $mods['footer_bg_color'];
 
     $data = '
         body .soliloquy-container .jma-dynamic-slide .soliloquy-caption {
-            width: ' . $jma_spec_options['site_width'] . 'px;
+            width: ' . $mods['site_width'] . 'px;
             max-width: 100%;
         }
         body .soliloquy-container .soliloquy-controls-direction>a {
             background-color: ' . $adjusted_icon_color . '
-        }
-        body .soliloquy-container .jma-dynamic-slide.special-title .soliloquy-caption-inside>h2 {
-            font-family: ' . $jma_spec_options['typography_special']['google'] . ';
-        }
-        body .soliloquy-container .btn {
-            color:' . $jma_spec_options['button_font'] . ';
-            background-color:' . $jma_spec_options['button_back'] . ';
-            border-color:' . $jma_spec_options['button_font'] . ';
-            border:solid!important;
-        }
-        body .soliloquy-container .btn:hover {
-            color:' . $jma_spec_options['button_font_hover'] . ';
-            background-color:' . $jma_spec_options['button_back_hover'] . ';
-            border-color:' . $jma_spec_options['button_font_hover'] . ';
         }';
     wp_add_inline_style('jma_soliloquy_css', $data);
 }
@@ -102,26 +87,25 @@ function soliloquy_slider_array_filter($slider_selections)
     }
 
     if (count($sliders)) {
-        $slider_selections['soliloquy-slider'] = $sliders;
+        $slider_selections = $sliders;
     }
     return $slider_selections;
 }
 
 function jma_integrate_soliloquy_options()
 {
-    add_filter('slider_array_filter', 'soliloquy_slider_array_filter');
+    add_filter('jma_ghb_slider_array_filter', 'soliloquy_slider_array_filter');
 }
 add_action('after_setup_theme', 'jma_integrate_soliloquy_options');
 
 
 /* displays the slider */
-function jma_soliloquy_slider_filter($return, $type_id)
+function jma_soliloquy_slider_filter($return, $page_vals)
 {
-    $slider_array = explode('|', $type_id);
-    if ($slider_array[0] == 'soliloquy-slider') {
-        if (function_exists('soliloquy')) {
-            $return = soliloquy($slider_array[1]);
-        }
+    if (function_exists('soliloquy')) {
+        //grab the slider height and width
+        $sol_data = get_post_meta($page_vals['slider_id'], '_sol_slider_data', true);
+        $return = '<div class="jma-sol-featured-display" style="width:' . $sol_data['config']['slider_width'] . 'px;height:' . $sol_data['config']['slider_height'] . 'px;">' . do_shortcode('[soliloquy id="' . $page_vals['slider_id'] . '"]') . '</div>';
     }
     return $return;
 }
@@ -130,24 +114,26 @@ function jma_integrate_soliloquy_sliders()
 {
     //either display the dynamic slider (true) normal slider selection (false)
     $filter = jma_dynamic_selected() ? 'jma_soliloquy_dynamic_header': 'jma_soliloquy_slider_filter';
-    add_filter('return_display_header_slider', $filter, 10, 2);
+    add_filter('jma_ghb_features_image', $filter, 10, 2);
     add_action('wp_enqueue_scripts', 'jma_soliloquy_files', 1000);
 }
 add_action('template_redirect', 'jma_integrate_soliloquy_sliders', 9999);
 
-function jma_soliloquy_dynamic_header()
+function jma_soliloquy_dynamic_header($return, $page_vals)
 {
+    $sol_data = get_post_meta($page_vals['slider_id'], '_sol_slider_data', true);
     // Put image IDs into correct format for Soliloquy
     if (!function_exists('get_field')) {
         return;
     }
+    $settings = get_field('settings');
     $rows = get_field('soliloquy_slides');
+    $image_array = array();
+    $caption_array = array();
 
     if (is_array($rows) && count($rows)) {
 
-            // if the field has content...
-        $image_array = array();
-        $caption_array = array();
+        // if the field has content...
 
         foreach ($rows as $row) {//wrap_link
             if (!$row['hide'] && isset($row['image']) && $row['image']) {
@@ -163,7 +149,7 @@ function jma_soliloquy_dynamic_header()
                     $this_caption .= '<div>' . $row['caption_body'] . '</div>';
                 }
                 if (is_array($link)) {
-                    $format = '<a class=\'btn btn-default\' href=\'%1$s\' target=\'%2$s\' title=\'%3$s\'>%3$s</a>';
+                    $format = '<a class=\'gbs-btn btn-default\' href=\'%1$s\' target=\'%2$s\' title=\'%3$s\'>%3$s</a>';
                     $this_caption .= sprintf($format, $link['url'], $link['target'], $link['title']);
                 }
                 //need to temporarily replace commas
@@ -181,16 +167,12 @@ function jma_soliloquy_dynamic_header()
 
     // Generate the Dynamic Soliloquy slider
 
+    $height = isset($settings['slider_height']) && $settings['slider_height']? $settings['slider_height']: $sol_data['config']['slider_height'];
 
-    if (function_exists('soliloquy_dynamic')) {
-        soliloquy_dynamic(
-            array(
-                'id' => 'custom-project-images',
-                'images' => $img_ids,
-                'captions' => $captions ),
-            false
-        );
-    }
+    $width = isset($settings['slider_width']) && $settings['slider_width']? $settings['slider_width']: $sol_data['config']['slider_width'];
+
+
+    return '<div class="jma-sol-featured-display" style="width:' . $width . 'px;height:' . $height . 'px;">'.do_shortcode('[soliloquy dynamic="custom-project-images" images="' . $img_ids . '" captions="' . $captions . '"]</div>');
 }
 
 function jma_soliloquy_comma_recover($out)
@@ -203,20 +185,18 @@ add_filter('soliloquy_output_after_caption', 'jma_soliloquy_comma_recover');
 function jma_soliloquy_output_item_classes($classes, $slide, $i, $data)
 {
     global $post;
+    if (!is_array($data)) {
+        $data = array();
+    }
     if ($data['id'] == 'custom_project_images') {
         $rows = get_field('soliloquy_slides');
-        if (is_page(2)) {
-            echo '<pre>';
-            print_r($rows);
-            echo '</pre>';
-        }
+        //if (is_page(2)) {
+        //}
         if (!is_array($rows)) {
             return $classes;
-        }
-
-        //get rid of hidden rows and rows with no image selected
+        }       //get rid of hidden rows and rows with no image selected
         foreach ($rows as $y => $row) {
-            if (is_array($row['hide'] && $row['hide'][0]) || !isset($row['image']) || !$row['image']) {
+            if ((is_array($row['hide']) && isset($row['hide'][0]) && $row['hide'][0]) || !(isset($row['image']) && $row['image'])) {
                 unset($rows[$y]);
             }
         }
@@ -228,7 +208,6 @@ function jma_soliloquy_output_item_classes($classes, $slide, $i, $data)
         // only slides that are displayed starting with 1,2,3...
         $this_row = $rows[($i-1)];
         $classes[] = 'jma-dynamic-slide';
-        $classes[] = 'jma-dynamic-slide-hidden';
 
         if (isset($this_row['class'])) {
             $items = explode(' ', $this_row['class']);
@@ -285,7 +264,7 @@ function jma_dynamic_soliloquy_pre_data($data)
                 // we handle caption pos above
                 if ($i !== 'default_caption_position') {
                     //pause on hover and autostart
-                    if (is_array($setting)) {
+                    if (is_array($setting) && isset($setting[0])) {
                         $data['config'][$i] = $setting[0]? 1: 0;
                     } else {//dimensions and timing
                         if ($setting) {
@@ -321,6 +300,5 @@ if (function_exists('acf_add_options_page')) {
 }
 
 //all the options (settings and edit screen)
-if (function_exists('acf_add_local_field_group')) {
+
     include('jma-soliloquy-addfieldgroups.php');
-}

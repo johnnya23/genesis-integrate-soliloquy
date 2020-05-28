@@ -17,13 +17,6 @@ body .soliloquy-container .soliloquy-pager-link.active, body .soliloquy-containe
 }
 
 /* arrow nav */
-body.big_slider_wide .soliloquy-controls-direction, body.full_image_wide .soliloquy-controls-direction {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
 body .soliloquy-container .soliloquy-controls-direction>a {
     top: 50%;
     transform: translateY(-50%);
@@ -36,24 +29,6 @@ body .soliloquy-container .soliloquy-controls-direction>a {
     transition: opacity 400ms ease-in-out !important;
     opacity: 0 !important;
     background-position: center center;
-}
-
-.jma-big-btn .soliloquy-caption-inside {
-    width: 100% !important;
-    max-width: 100% !important;
-    height: 100% !important;
-}
-
-body .soliloquy-container .jma-big-btn a.btn {
-    display: block;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background: none !important;
-    font-size: 0 !important;
-    border-width: 0 !important;
 }
 
 body .soliloquy-container:hover .soliloquy-controls-direction>a {
@@ -72,7 +47,41 @@ body .soliloquy-container .soliloquy-controls-direction>a.soliloquy-next {
     background-image: url('./next_arrow.png');
 }
 
-/* captions */
+@media(min-width:768px) {
+    .jma-sol-featured-display {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.inner-visual.normal-width {
+    height: inherit !important;
+}
+
+.normal-width .jma-sol-featured-display {
+    width: 100% !important;
+    height: inherit !important;
+    position: relative;
+    top: 0;
+    left: 0;
+    transform: none;
+}
+
+.jma-sol-featured-display .soliloquy-viewport {
+    position: static !important;
+}
+
+.jma-sol-featured-display .soliloquy-controls-direction {
+    position: absolute;
+    width: 100%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* DYNAMIC slider_size captions */
 body .soliloquy-container .jma-dynamic-slide .soliloquy-caption {
     top: 50%;
     left: 50%;
@@ -181,10 +190,6 @@ body .soliloquy-container .jma-dynamic-slide.outline-title .soliloquy-caption .s
     background: rgba(255, 255, 255, 0.8);
     padding: 15px;
     color: #666666;
-}
-
-.metaslider .nivo-caption h2, .metaslider .nivo-caption h3 {
-    margin: 0 0 5px 0;
 }
 
 .jma-dynamic-slide-hidden .soliloquy-caption {
