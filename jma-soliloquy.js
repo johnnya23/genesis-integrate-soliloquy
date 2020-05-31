@@ -79,7 +79,8 @@ jQuery(document).ready(function($) {
     });
 
     $window.resize(function(e) {
-        fix_soliloquy_elements();
+        if ($('.jma-sol-featured-display').length)
+            fix_soliloquy_elements();
     });
 
 });
