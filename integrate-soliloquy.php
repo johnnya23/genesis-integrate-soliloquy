@@ -114,7 +114,7 @@ function jma_integrate_soliloquy_sliders()
 {
     //either display the dynamic slider (true) normal slider selection (false)
     $filter = jma_dynamic_selected() ? 'jma_soliloquy_dynamic_header': 'jma_soliloquy_slider_filter';
-    add_filter('jma_ghb_features_image', $filter, 10, 2);
+    add_filter('jma_ghb_features_slider', $filter, 10, 2);
     add_action('wp_enqueue_scripts', 'jma_soliloquy_files', 1000);
 }
 add_action('template_redirect', 'jma_integrate_soliloquy_sliders', 9999);
