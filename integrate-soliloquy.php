@@ -170,9 +170,17 @@ function jma_soliloquy_dynamic_header($return, $page_vals)
     $height = isset($settings['slider_height']) && $settings['slider_height']? $settings['slider_height']: $sol_data['config']['slider_height'];
 
     $width = isset($settings['slider_width']) && $settings['slider_width']? $settings['slider_width']: $sol_data['config']['slider_width'];
+    
+    $caption_string = $return = '';
+    if ($captions) {
+        $caption_string = ' captions="' . $captions . '"';
+    }
 
+    if ($img_ids) {
+        $return = '<div class="jma-sol-featured-display" style="width:' . $width . 'px;height:' . $height . 'px;">'.do_shortcode('[soliloquy dynamic="custom-project-images" images="' . $img_ids . '"' . $caption_string . ']</div>');
+    }
 
-    return '<div class="jma-sol-featured-display" style="width:' . $width . 'px;height:' . $height . 'px;">'.do_shortcode('[soliloquy dynamic="custom-project-images" images="' . $img_ids . '" captions="' . $captions . '"]</div>');
+    return $return;
 }
 
 function jma_soliloquy_comma_recover($out)
