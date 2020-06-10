@@ -1,5 +1,10 @@
 jQuery(document).ready(function($) {
+
     $window = $(window);
+
+    if (($('.jma-gbs-mobile-panel').css('display') == 'none') && ($window.width() > $window.height())) {
+        $('.inner-visual').removeClass('normal-width');
+    }
     var featured_display_ratio = 0;
     if ($('.jma-sol-featured-display').length) {
         var $featured_display = $('.jma-sol-featured-display');

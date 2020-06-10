@@ -56,6 +56,14 @@ body .soliloquy-container .soliloquy-controls-direction>a.soliloquy-next {
     }
 }
 
+/* don't wait for jquery when it's obvious */
+@media(max-width:767px) {
+    .inner-visual {
+        height: inherit !important;
+    }
+}
+
+/* normal width is going to come into play on tall tablets */
 .inner-visual.normal-width {
     height: inherit !important;
 }
