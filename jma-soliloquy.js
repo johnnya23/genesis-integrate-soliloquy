@@ -4,6 +4,8 @@ jQuery(document).ready(function($) {
 
     if (($('.jma-gbs-mobile-panel').css('display') == 'none') && ($window.width() > $window.height())) {
         $('.inner-visual').removeClass('normal-width');
+    } else {
+        $('.inner-visual').addClass('normal-width');
     }
     var featured_display_ratio = 0;
     if ($('.jma-sol-featured-display').length) {
@@ -13,7 +15,6 @@ jQuery(document).ready(function($) {
     }
 
     function fix_soliloquy_elements() {
-        //width_val = $('body').hasClass('jma-stack-991') ? 12 : 7;
 
         if (($('.jma-gbs-mobile-panel').css('display') == 'none') && ($window.width() > $window.height())) {
             $('.inner-visual').removeClass('normal-width');
@@ -58,7 +59,7 @@ jQuery(document).ready(function($) {
         }
     }
 
-    /* on load we dont run fix elements until the slider nav is loaded  */
+    /* on ready we dont run fix elements until the slider nav is loaded  */
     function solIsLoaded() {
 
         fix_soliloquy_elements();
