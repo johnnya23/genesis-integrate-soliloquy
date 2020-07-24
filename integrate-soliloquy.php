@@ -11,6 +11,21 @@ Author URI: http://cleansupersites.com
 License: GPL2
 */
 
+function jma_sol_admin_notice()
+{
+    echo '<div class="notice notice-error is-dismissible">
+             <p>The Genesis Integrate Soliloquy plugin REQUIRES Genesis Bootstrap plugin</p>
+         </div>';
+}
+function jma_sol_check_for_plugin()
+{
+    if (!is_plugin_active('jma-bootstrap-genesis/jma-bootstrap-genesis.php')) {
+        add_action('admin_notices', 'jma_sol_admin_notice');
+        return null;
+    }
+}
+add_action('admin_init', 'jma_sol_check_for_plugin');
+
 if (! defined('JMASOL_DIR')) {
     define('JMASOL_DIR', plugin_dir_path(__FILE__));
 }
@@ -170,7 +185,7 @@ function jma_soliloquy_dynamic_header($return, $page_vals)
     $height = isset($settings['slider_height']) && $settings['slider_height']? $settings['slider_height']: $sol_data['config']['slider_height'];
 
     $width = isset($settings['slider_width']) && $settings['slider_width']? $settings['slider_width']: $sol_data['config']['slider_width'];
-    
+
     $caption_string = $return = '';
     if ($captions) {
         $caption_string = ' captions="' . $captions . '"';
