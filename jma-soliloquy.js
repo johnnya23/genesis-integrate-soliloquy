@@ -2,11 +2,6 @@ jQuery(document).ready(function($) {
 
     $window = $(window);
 
-    if (($('.jma-gbs-mobile-panel').css('display') == 'none') && ($window.width() > $window.height())) {
-        $('.inner-visual').removeClass('normal-width');
-    } else {
-        $('.inner-visual').addClass('normal-width');
-    }
     var featured_display_ratio = 0;
     if ($('.jma-sol-featured-display').length) {
         var $featured_display = $('.jma-sol-featured-display');
@@ -15,13 +10,12 @@ jQuery(document).ready(function($) {
     }
 
     function fix_soliloquy_elements() {
-
-        if (($('.jma-gbs-mobile-panel').css('display') == 'none') && ($window.width() > $window.height())) {
-            $('.inner-visual').removeClass('normal-width');
-            $('.inner-visual').css('max-height', featured_display_orig_height + 'px');
+        if (($('.jma-gbs-mobile-panel').css('display') == 'none') && ($('.jma-sol-featured-display').css('position') == 'absolute')) {
+            //$('.inner-visual').css('max-height', featured_display_orig_height + 'px');
             if (featured_display_ratio) {
                 $target = $featured_display.closest('.inner-visual');
                 target_ratio = $target.height() / $target.width();
+
                 if (target_ratio < featured_display_ratio) {
                     //target is taller than image use 100% width and left
                     //top and bottom overflow and adjust dots
@@ -55,11 +49,11 @@ jQuery(document).ready(function($) {
                 }
             }
         } else {
-            $('.inner-visual').addClass('normal-width');
+            $featured_display.css('width', '');
         }
     }
 
-    /* on ready we dont run fix elements until the slider nav is loaded  */
+    // on ready we dont run fix elements until the slider nav is loaded
     function solIsLoaded() {
 
         fix_soliloquy_elements();
@@ -85,8 +79,9 @@ jQuery(document).ready(function($) {
     });
 
     $window.resize(function(e) {
-        if ($('.jma-sol-featured-display').length)
+        if ($('.jma-sol-featured-display').length) {
             fix_soliloquy_elements();
+        }
     });
 
 });

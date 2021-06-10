@@ -90,7 +90,7 @@ function soliloquy_post_group_options()
         'description' => '',
     ));
 }
-add_action('acf/init', 'soliloquy_post_group_options', 998);
+add_action('acf/init', 'soliloquy_post_group_options', 996);
 
 
 

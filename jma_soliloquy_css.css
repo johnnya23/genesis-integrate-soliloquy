@@ -47,7 +47,7 @@ body .soliloquy-container .soliloquy-controls-direction>a.soliloquy-next {
     background-image: url('./next_arrow.png');
 }
 
-@media(min-width:768px) {
+@media screen and (min-width:768px) {
     .jma-sol-featured-display {
         position: absolute;
         left: 50%;
@@ -56,25 +56,12 @@ body .soliloquy-container .soliloquy-controls-direction>a.soliloquy-next {
     }
 }
 
-/* don't wait for jquery when it's obvious */
-@media(max-width:767px) {
-    .inner-visual {
-        height: unset !important;
+@media screen and (orientation: portrait), (max-width:768px) {
+    .jma-sol-featured-display {
+        left: unset;
+        top: unset;
+        transform: unset;
     }
-}
-
-/* normal width is going to come into play on tall tablets */
-.inner-visual.normal-width {
-    height: unset !important;
-}
-
-.normal-width .jma-sol-featured-display {
-    width: 100% !important;
-    height: unset !important;
-    position: relative;
-    top: 0;
-    left: 0;
-    transform: none;
 }
 
 .jma-sol-featured-display .soliloquy-viewport {
@@ -96,7 +83,7 @@ body .soliloquy-container .jma-dynamic-slide .soliloquy-caption {
     transform: translate(-50%, -50%);
 }
 
-@media (max-width: 600px) {
+@media screen and (max-width: 600px) {
     .soliloquy-container .soliloquy-caption, .soliloquy-container .soliloquy-controls-auto {
         display: unset !important;
     }
@@ -111,7 +98,7 @@ body .soliloquy-container .jma-dynamic-slide .soliloquy-caption .soliloquy-capti
     font-size: 24px;
 }
 
-@media(min-width:768px) {
+@media screen and (min-width:768px) {
     body .soliloquy-container .jma-dynamic-slide .soliloquy-caption .soliloquy-caption-inside>h2 {
         font-size: 32px;
     }
@@ -122,7 +109,7 @@ body .soliloquy-container .jma-dynamic-slide .soliloquy-caption .soliloquy-capti
     }
 }
 
-@media(min-width:992px) {
+@media screen and (min-width:992px) {
     body .soliloquy-container .jma-dynamic-slide .soliloquy-caption .soliloquy-caption-inside>h2 {
         font-size: 40px;
     }
@@ -136,7 +123,7 @@ body .soliloquy-container .jma-dynamic-slide.outline-title .soliloquy-caption .s
     text-shadow: rgb(255, 255, 255) 1px 0px 0px, rgb(255, 255, 255) 0.540302px 0.841471px 0px, rgb(255, 255, 255) -0.416147px 0.909297px 0px, rgb(255, 255, 255) -0.989992px 0.14112px 0px, rgb(255, 255, 255) -0.653644px -0.756802px 0px, rgb(255, 255, 255) 0.283662px -0.958924px 0px, rgb(255, 255, 255) 0.96017px -0.279415px 0px;
 }
 
-@media(max-width:767px) {
+@media screen and (max-width:767px) {
     .jma-dynamic-slide.has-link.has-title.has-body .soliloquy-caption-inside>div {
         display: none;
     }
@@ -202,4 +189,22 @@ body .soliloquy-container .jma-dynamic-slide.outline-title .soliloquy-caption .s
 
 .jma-dynamic-slide-hidden .soliloquy-caption {
     display: none
+}
+
+.jma-big-btn .soliloquy-caption-inside {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+}
+
+body .soliloquy-container .jma-big-btn a.gbs-btn {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: none !important;
+    font-size: 0 !important;
+    border-width: 0 !important;
 }
