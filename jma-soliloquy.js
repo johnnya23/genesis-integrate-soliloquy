@@ -56,7 +56,10 @@ jQuery(document).ready(function($) {
     // on ready we dont run fix elements until the slider nav is loaded
     function solIsLoaded() {
 
-        fix_soliloquy_elements();
+
+        if ($('.jma-sol-featured-display').length) {
+            fix_soliloquy_elements();
+        }
 
     }
 
