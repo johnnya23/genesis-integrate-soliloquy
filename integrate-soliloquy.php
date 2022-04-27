@@ -194,7 +194,6 @@ function jma_soliloquy_dynamic_header($return, $page_vals)
     if ($img_ids) {
         $return = '<div class="jma-sol-featured-display" style="width:' . $width . 'px;height:' . $height . 'px;">'.do_shortcode('[soliloquy dynamic="custom-project-images" images="' . $img_ids . '"' . $caption_string . ']</div>');
     }
-
     return $return;
 }
 
@@ -266,6 +265,13 @@ function jma_soliloquy_output_item_classes($classes, $slide, $i, $data)
     return $classes;
 }
 add_filter('soliloquy_output_item_classes', 'jma_soliloquy_output_item_classes', 10, 4);
+
+function loose_lazy($lazy)
+{
+    $lazy = str_replace(' loading="lazy"', '', $lazy);
+    return $lazy;
+}
+add_filter('soliloquy_output_after_image', 'loose_lazy');
 
 /* implememt the slider seetings (dimemsions, timing, pausing, autostart) */
 function jma_dynamic_soliloquy_pre_data($data)
